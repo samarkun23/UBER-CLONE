@@ -4,8 +4,10 @@ console.log()  //this is step ko deklena
 
 import express from 'express'
 import cors from 'cors'
-
 const app = express();
+import connectToDb from './db/db.js';
+
+connectToDb();
 
 app.use(cors());
 
