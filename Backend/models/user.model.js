@@ -1,4 +1,6 @@
 import mongooes from 'mongooes'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 const userSchema = new mongooes.Schema({
     fullname:{
@@ -22,8 +24,23 @@ const userSchema = new mongooes.Schema({
         type: String,
         required: true,
         //min length ki jarurt nhi padegi bec we are using JWT token 
+        select: false
     },
     socketId: {
         type: String,
     },
 })
+userSchema.methods.generateAuthToken = function(){
+    const token = jwt.sing({_id: this._id}, process.env.JWT_SECRET);
+    return token
+}
+userSchema.methods.comparePassword = async function (password) {
+    return await bcrypt.compare(password, this.password);
+}
+userSchema.statics.hashPassword = async function (password) {
+    return await bcrypt.hash(password, 10);
+}
+
+
+
+export const User = mongooes.model('User', userSchema);
